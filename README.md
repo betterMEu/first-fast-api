@@ -1,3 +1,14 @@
+# 激活虚拟环境
+安装虚拟环境
+~~~
+python -m venv .venv
+~~~
+激活虚拟环境
+~~~
+.venv\Scripts\activate
+~~~
+
+
 # 安装依赖
 
 安装开发环境依赖

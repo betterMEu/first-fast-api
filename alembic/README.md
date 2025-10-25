@@ -24,10 +24,10 @@ alembic revision --autogenerate -m "描述"
 ## 升级
 
 ```
-alembic upgrade <revision_id>           [升级特定版本]
+alembic upgrade head                    [head无分支升级至最新迁移文件]
+                <revision_id>           [升级特定版本]
                 <+num>                  [升级num步]
                 <revision_id><+num>
-                head                    [head无分支升级至最新迁移文件]
                 heads                   [heads合并所有分支升级]
 ```
 
