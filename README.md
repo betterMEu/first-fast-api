@@ -1,11 +1,11 @@
-# 激活虚拟环境
-安装虚拟环境
+# 项目初始化
+安装项目构建工具uv
 ~~~
-python -m venv .venv
+pip install uv
 ~~~
-激活虚拟环境
+uv构建环境
 ~~~
-.venv\Scripts\activate
+uv init [project_name]
 ~~~
 
 
@@ -14,19 +14,40 @@ python -m venv .venv
 安装开发环境依赖
 
 ```
-pip install -r  .\requirements\dev.txt
+# 安装运行时依赖
+uv pip install .
+
+# 安装开发依赖
+uv pip install .[dev]
+
+# 安装所有依赖（包括开发依赖）
+uv pip install -e .[dev]
+
+# 卸载所有已安装的包
+uv pip uninstall --all
 ```
 
-安装测试环境依赖
+更新uv.lock文件
+```
+# 更新所有依赖并重新生成锁文件
+uv lock --upgrade
+
+# 更新特定包
+uv lock --upgrade-package fastapi
+
+# 同步更新后的依赖到环境
+uv sync
+
+# 根据 uv.lock 文件重新同步环境
+uv sync --locked
+```
 
 ```
-pip install -r  .\requirements\test.txt
-```
+# 添加新的运行时依赖
+uv add package_name
 
-安装生产环境依赖
-
-```
-pip install -r  .\requirements\prod.txt
+# 添加新的开发依赖
+uv add --group dev package_name
 ```
 
 为什么需要区分环境依赖？
@@ -74,18 +95,41 @@ pip install -r  .\requirements\prod.txt
 
 # 启动
 
-开发环境启动，具备热加载关键功能
 
+
+uvicorn启动
 ```
-fastapi dev src/main.py
+uvicorn main:app [--port 3000] [--reload]
+```
+* uvicorn: ASGI 服务器，用于运行 Python 异步 Web 应用
+* main: Python 模块名称（即 main.py 文件）
+* app: 在 main.py 模块中定义的应用实例
+
+uv启动
+```
+uv run -- uvicorn main:app [--port 3000] [--reload]
+```
+优势:
+* 自动管理虚拟环境
+* 确保使用正确的依赖版本
+* 简化开发工作流
+
+fastapi启动
+```
+框架层面: FastAPI 是 Web 框架，本身不能直接启动
+实际执行: 通常通过 uvicorn 或其他 ASGI 服务器来运行 FastAPI 应用
+开发模式: fastapi dev 命令实际上是调用 uvicorn 启动应用
 ```
 
-生产环境启动，减少加载的内容，增强服务处理能力
-
-```
-fastapi run src/main.py
-```
-
+推荐使用场景
+* 开发阶段: 使用 uv run -- uvicorn src.main:app 确保环境一致性
+* 生产部署: 直接使用 uvicorn src.main:app 或通过 Gunicorn 等 WSGI 容器
+* 快速原型: fastapi dev 提供便捷的开发服务器（需要安装 fastapi[all]）
 
 
 # 代码提交检查
+使用命令行提交代码才会执行代码检查
+~~~
+git add .
+git commit -m "message"
+~~~
