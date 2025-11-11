@@ -16,7 +16,6 @@ class Settings(BaseSettings):
     datasource_password: str = ""
     datasource_database: str = ""
 
-    @computed_field  # type: ignore[prop-decorator]
     @property
     def datasource_url(self) -> PostgresDsn:
         return PostgresDsn.build(

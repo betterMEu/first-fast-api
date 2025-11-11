@@ -9,11 +9,28 @@ pip install uv
 uv init [project_name]
 ~~~
 
-# 安装依赖和环境（.venv）
+# 依赖和环境（.venv）
 
 ## 依赖
 
-- 安装
+- **增加**
+
+  - 依赖
+
+    ```
+    uv add <package_name>
+    ```
+
+  - 分组中的依赖
+
+    ```
+    # dev分组
+    uv add --group dev <package_name>
+    ```
+  
+  
+  
+- **安装**
 
   - 运行时依赖
 
@@ -33,7 +50,9 @@ uv init [project_name]
     uv pip install -e .[dev]
     ```
 
-- 卸载
+  
+
+- **卸载**
 
   - 所有已安装的包
 
@@ -45,35 +64,33 @@ uv init [project_name]
 
 ## 环境
 
-安装完依赖，同步（创建）环境
-
-```
-uv sync
-```
+> 什么是环境？
+>
+> 程序代码运行在环境中，使用uv时，环境以uv.lock为蓝图，而uv.lock根据项目依赖而生成
 
 
 
-如果有依赖变动，更新uv.lock文件
+如果 pyproject.toml 中的依赖存在更新的可兼容版本（如依赖要求是fastapi>=0.120.0，但0.121.0是可兼容的最新版本，将会提示更新），开发者可选择更新
+
+具体操作：
+
+（1）更新依赖，重新uv.lock文件
 
 ```
 # 更新所有依赖并重新生成锁文件
 uv lock --upgrade
 
-# 更新特定包
+# 更新特定依赖
 uv lock --upgrade-package fastapi
+```
 
-# 根据 uv.lock 文件重新同步（创建）环境（uv.lock是环境实际使用的依赖）
+（2）依赖更新完，要以uv.lock为蓝图，重新搭建环境
+
+```
 uv sync --locked
 ```
 
-```
-# 添加新的运行时依赖
-uv add package_name
-
-# 添加新的开发依赖
-uv add --group dev package_name
-```
-
+不使用[--locked]，环境将可能使用 pyproject.toml 中约束的新版本，不严格遵循lcok文件
 
 # 启动
 
@@ -83,30 +100,22 @@ uvicorn启动
 ```
 uvicorn main:app [--port 3000] [--reload]
 ```
-* uvicorn: ASGI 服务器，用于运行 Python 异步 Web 应用
 * main: Python 模块名称（即 main.py 文件）
 * app: 在 main.py 模块中定义的应用实例
+
+
 
 uv启动
 ```
 uv run -- uvicorn main:app [--port 3000] [--reload]
 ```
-优势:
-* 自动管理虚拟环境
-* 确保使用正确的依赖版本
-* 简化开发工作流
 
-fastapi启动
-```
-框架层面: FastAPI 是 Web 框架，本身不能直接启动
-实际执行: 通常通过 uvicorn 或其他 ASGI 服务器来运行 FastAPI 应用
-开发模式: fastapi dev 命令实际上是调用 uvicorn 启动应用
-```
 
-推荐使用场景
-* 开发阶段: 使用 uv run -- uvicorn src.main:app 确保环境一致性
-* 生产部署: 直接使用 uvicorn src.main:app 或通过 Gunicorn 等 WSGI 容器
-* 快速原型: fastapi dev 提供便捷的开发服务器（需要安装 fastapi[all]）
+fastapi-cli启动（调用uvicorn启动）
+```
+fastapi dev  （热加载）
+fastapi run
+```
 
 
 # 代码提交检查
@@ -117,3 +126,19 @@ pre-commit run
 git commit -m "message"    
 ~~~
 执行提交命令前最好先执行pre-commit run进行检查和格式化，否则提交时发现不符合规范会进行修改但会中断提交，修改的文件需要重新加到缓冲区（git add .)，即重走这三个步骤
+
+
+
+
+
+
+
+# FastApi
+
+## 环境变量
+
+### 命令行设置
+
+
+
+### [静态文件.env设置](https://fastapi.tiangolo.com/zh/advanced/settings/#env)
